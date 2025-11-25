@@ -1,16 +1,10 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
-
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Button,
   StatusBar,
   StyleSheet,
   Text,
+  TextInput,
   useColorScheme,
   View,
 } from 'react-native';
@@ -19,7 +13,7 @@ import { KycProvider, useKyc } from 'react-native-astra-sdk';
 
 function App() {
   const isDarkMode = useColorScheme() === 'dark';
-  
+
   return (
     <SafeAreaProvider>
       <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
@@ -33,21 +27,46 @@ function App() {
 function AppContent() {
   const { startKyc } = useKyc();
 
+  const [serverKey, setServerKey] = useState('');
+  const [email, setEmail] = useState('');
+  const [reference, setReference] = useState('');
+
+  const submit = () => {
+    if (!serverKey || !email || !reference) {
+      return;
+    }
+
+    startKyc({
+      serverKey: serverKey,
+      email: email,
+      reference: reference,
+    });
+  };
+
   return (
     <View style={styles.container}>
-
       <Text style={styles.textStyle}>Astra Kyc</Text>
 
-      <Button
-        title="Start"
-        onPress={() =>
-          startKyc({
-            serverKey: '26a66f45-a3ba-4dd3-94b2-d979d1664fec',
-            email: 'ahmadraza@gmail.com',
-            reference: 'org-1763992475881',
-          })
-        }
+      <TextInput
+        style={styles.inputStyle}
+        placeholder="serverKey"
+        onChangeText={setServerKey}
+        value={serverKey}
       />
+      <TextInput
+        style={styles.inputStyle}
+        placeholder="email"
+        onChangeText={setEmail}
+        value={email}
+      />
+      <TextInput
+        style={styles.inputStyle}
+        placeholder="reference"
+        onChangeText={setReference}
+        value={reference}
+      />
+
+      <Button title="Start" onPress={submit} color={''} />
     </View>
   );
 }
@@ -57,11 +76,22 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    padding: 30,
   },
   textStyle: {
     color: 'white',
     fontSize: 30,
     marginBottom: 20,
+  },
+  inputStyle: {
+    height: 50,
+    width: '100%',
+    borderColor: 'gray',
+    borderWidth: 1,
+    marginBottom: 20,
+    borderRadius: 5,
+    padding: 10,
+    color: 'white',
   },
 });
 
